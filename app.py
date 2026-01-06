@@ -389,7 +389,7 @@ with tab_review:
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button("💾 Save Changes"):
+        if st.button("✅Confirm Changes"):  #💾 Save Changes"):
             st.session_state.review_data = edited_output
             st.success("Review changes saved.")
 
