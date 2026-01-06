@@ -377,7 +377,7 @@ with tab_review:
 
     for section in review_data.keys():
         # Temporary debug line
-        print(f"DEBUG: Processing {section}, value is: {your_data_variable[section]}")
+        print(f"DEBUG: Processing {section}, value is: {edited_output[section]}")
         
         edited_output[section] = render_any(
             pretty_label(section),
