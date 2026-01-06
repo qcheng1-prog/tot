@@ -13,7 +13,7 @@ OAUTH_SCOPE = "openid email profile"
 
 #REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://handwritingextraction.streamlit.app/")
 #GOOGLE_CALLBACK_URL=http://localhost:18501/auth/google/callback
-REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:18501/")
+REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://tot-uncc.streamlit.app/")  #http://localhost:18501/")
 
 @dataclass
 class CurrentUser:
