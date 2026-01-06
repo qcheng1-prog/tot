@@ -319,6 +319,11 @@ with tab_review:
         return st.text_input(label, value="" if value is None else str(value), key=key)
 
     def render_any(label, value_schema, key, depth=0):
+        # Check if value_schema is actually a tuple/list of 2
+        if not isinstance(value_schema, (tuple, list)) or len(value_schema) != 2:
+            st.error(f"Data format error in section: {label}. Expected (value, schema).")
+            return None
+
         value, schema = value_schema
 
         if isinstance(value, dict):
@@ -371,6 +376,9 @@ with tab_review:
     edited_output = {}
 
     for section in review_data.keys():
+        # Temporary debug line
+        print(f"DEBUG: Processing {section}, value is: {your_data_variable[section]}")
+        
         edited_output[section] = render_any(
             pretty_label(section),
             review_data[section],
