@@ -9,30 +9,78 @@ import tempfile
 from llm_handler import LLMHandler
 
 
+# SYSTEM_INSTRUCTIONS = """
+# You are an expert OCR and form-understanding assistant.
+
+# {schema}
+
+# You receive a scanned PDF form that contains both printed labels and handwritten responses.
+# Your job:
+# 1. Extract ONLY the handwritten or user-entered responses.
+# 2. Match each extracted response exactly to the JSON schema provided.
+# 3. If a field is blank, illegible, redacted or missing, return null.
+# 4. Do NOT guess or copy printed text.
+# 5. Return only valid JSON that fits the schema structure exactly.
+# 6. For checkboxes, return the marked options.
+# 7. Normalize dates to YYYY-MM-DD and phone numbers to E.164 if possible.
+
+# Return strictly valid JSON. Do not include comments, trailing commas, or extra text.
+# """
+
 SYSTEM_INSTRUCTIONS = """
 You are an expert OCR and form-understanding assistant.
 
 {schema}
 
-You receive a scanned PDF form that contains both printed labels and handwritten responses.
-Your job:
-1. Extract ONLY the handwritten or user-entered responses.
-2. Match each extracted response exactly to the JSON schema provided.
-3. If a field is blank, illegible, or missing, return null.
-4. Do NOT guess or copy printed text.
-5. Return only valid JSON that fits the schema structure exactly.
-6. For checkboxes, return the marked options.
-7. Normalize dates to YYYY-MM-DD and phone numbers to E.164 if possible.
+You will be given:
+1) A JSON schema that defines FIELD NAMES and NESTING ONLY
+2) An image of a scanned, filled PDF form
 
-Return strictly valid JSON. Do not include comments, trailing commas, or extra text.
+CRITICAL RULES (NON-NEGOTIABLE):
+
+1. The schema is ONLY a structural guide.
+   Do NOT reproduce the schema.
+   Do NOT include schema metadata.
+
+2. Your output must be DATA ONLY.
+   Each field must map directly to a JSON value.
+   Allowed value types: string, number, boolean, array, or null.
+   NEVER wrap values inside objects.
+
+3. Do NOT include the following keys in your output:
+   type, properties, items, enum, description, value
+
+4. Extract ONLY handwritten or user-entered content.
+   Do NOT copy printed labels or instructions.
+   Do NOT guess missing information.
+
+5. If a field is blank, illegible, redacted, or not present on the page, return null for that field.
+
+6. For checkbox or enum fields:
+   Return ONLY the selected option values as strings.
+   If multiple options are selected, return an array of strings.
+   If none are selected, return an empty array [].
+
+7. Match the schema structure exactly:
+   Preserve nesting and field names.
+   Do not invent new fields.
+   Do not omit fields.
+
+8. Formatting rules:
+   Dates → YYYY-MM-DD (if clearly present)
+   Phone numbers → E.164 format (if clearly present)
+   Otherwise, return the raw visible value.
+
+Return STRICTLY valid JSON.
+No comments. No explanations. No extra text.
 """
 
 def extract_page_json(llm, page_image, page_num, schema_text):
     print(f"Processing page {page_num} ...")
 
     page_prompt = f"""
-This is page {page_num} of a multi-page form.
-Extract only the handwritten or user-entered responses visible on this page.
+This is page {page_num} of a multi page form.
+Extract only the handwritten or user entered responses visible on this page.
 Return valid JSON according to the provided schema.
 """
 
