@@ -1,38 +1,84 @@
 {
   "type": "object",
   "properties": {
-    "behaviorAndPersonality": {
+    "Learning_and_Personal_Growth": {
       "type": "object",
       "properties": {
-        "behavior_management_plan": {
-          "type": "string",
-          "description": "If any of these behaviors have caused a concern fot the safety of the applicant or other people, is anything currently being done to manage the behavior? This might include a formally implemented Behavior Treatment Plan, an approach to handling stress, therapy, or avoiding particular triggers for the behavior."
+        "time_comprehension_week": {
+          "type": "boolean",
+          "description": "Can the applicant identify the current day of the week?"
         },
-        "warning_signs_before_behavior": {
-          "type": "string",
-          "description": "Does the applicant have any behaviors that come before the harmful behavior? What warning signs are exhibited by the applicant that would help us deescalate the situation before it becomes unsafe?"
+        "time_comprehension_year": {
+          "type": "boolean",
+          "description": "Can the applicant identify the current day of the year?"
         },
-        "social_interaction_preference": {
+        "clock_comprehension_digital": {
+          "type": "boolean",
+          "description": "Can the applicant tell the time on a digital clock?"
+        },
+        "clock_comprehension_analog": {
+          "type": "boolean",
+          "description": "Can the applicant tell the time on a analog clock?"
+        },
+        "number_comprehension": {
+          "type": "integer",
+          "description": "What is the highest number the applicant can count to without assistance?"
+        },
+        "math_comprehension": {
           "type": "string",
           "enum": [
-            "The applicant enjoys interacting with others",
-            "The applicant prefers to spend time by themselves",
-            "The applicant is withdrawn at first, but outgoing once they are comfortable in a situation"
+            "Completes basic addition and subtraction problems",
+            "Completes basic multiplication and division problems",
+            "Math skills are equivalent to a freshman in high school",
+            "Math skills are equivalent to a high school graduate",
+            "Math skills are at a post high school level"
           ],
-          "description": "Check the option that you feel is most accurate:"
+          "description": "What is the applicant's current math comprehension?; Checkboxes on the form; select all that apply."
         },
-        "preferred_environment": {
+        "money_management_skills": {
           "type": "string",
-          "enum": ["Calm, low stimulus and relaxing", "Active, stimulating and engaging"],
-          "description": "What sort of environment does the applicant prefer most of the time?"
+          "enum": [
+            "Can count bills",
+            "Can count change",
+            "Understands how to make a purchase in a store using money or credit cards (may need assistance in counting the money)",
+            "Can plan a budget for at least one shopping trip"
+          ],
+          "description": "Please check all of the following that describes the applicant's money management skills:"
         },
-        "sensory_sensitivities": {
+        "reading_comprehension": {
           "type": "string",
-          "description": "Does the applicant have any sensitivity to light, sound, touch, or other sensory perceptions that we might consider in order to create a positive and comfortable environment for them?"
+          "enum": [
+            "No ability to read",
+            "Reads sight words and identifies symbols (stop signs, restroom signs, etc.)",
+            "Simple reading (around the level of a 3rd grader)",
+            "Average reading (at least middle school or junior high level)",
+            "Advanced reading (post high school level)"
+          ],
+          "description": "What is the applicant's current reading comprehension?"
         },
-        "enjoyable_activities": {
-          "type": "string",
-          "description": "What are some activities that the applicant enjoys, or that they might enjoy if given the opportunity? This might include participation in arts programs (like painting, photography, or theatre), regular physical exercise, volunteering in the community, or something that they've expressed interest in the past. Please be as specific as possible."
+        "academicAndLifeSkills": {
+          "type": "object",
+          "description": "Which academic and life skills would be most beneficial for the applicant to spend time improving? Check all that apply:",
+          "properties": {
+            "skills_to_improve": {
+              "type": "string",
+              "enum": [
+                "Reading",
+                "Writing",
+                "Math",
+                "Money management",
+                "Communicating with others more clearly",
+                "Communicating with others in a more positive way",
+                "Cooking",
+                "Cleaning (house work)",
+                "Safety skills",
+                "Other"
+              ]
+            },
+            "other_description": {
+              "type": "string",
+              "description": "If 'Other' is selected, specify the skill."
+            }          }
         }
       }
     }
