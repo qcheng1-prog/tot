@@ -6,11 +6,11 @@
       "properties": {
         "history_of_seizures": {
           "type": "boolean",
-          "description": "Does the applicant have any history of seizures?; Checkboxes on the form."
+          "description": "Does the applicant have any history of seizures?"
         },
         "seizure_activity_past_5_years": {
           "type": "boolean",
-          "description": "Has the applicant had any seizure activity in the past 5 years?; Checkboxes on the form."
+          "description": "Has the applicant had any seizure activity in the past 5 years?"
         },
         "last_seizure_date": {
           "type": "string",
@@ -19,7 +19,7 @@
         "seizure_control_with_medication": {
           "type": "string",
           "enum": ["Completely controlled", "Partially controlled", "Not controlled"],
-          "description": "Are the seizures currently being controlled with medication?; Checkboxes on the form."
+          "description": "Are the seizures currently being controlled with medication?"
         },
         "seizure_frequency": {
           "type": "string",
