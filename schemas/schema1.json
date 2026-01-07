@@ -36,20 +36,12 @@
       "type": "object",
       "properties": {
         "campus_interest": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": ["Phoenix Campus", "Maricopa Campus", "Casa Grande Campus", "Avondale Campus"]
-          },
-          "description": "Checkboxes on the form; select all that apply."
+          "type": "string",
+          "enum": ["Phoenix Campus", "Maricopa Campus", "Casa Grande Campus", "Avondale Campus"]
         },
         "funding_source": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": ["Division of Developmental Disabilities", "Private Pay (PP)", "Other"]
-          },
-          "description": "Checkboxes on the form; select all that apply."
+          "type": "string",
+          "enum": ["Division of Developmental Disabilities", "Private Pay (PP)", "Other"]
         },
         "support_contact": {
           "type": "object",
@@ -61,26 +53,25 @@
           "description": "DDD Support Coordinator/Service Contact"
         },
         "selected_programs": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "Adult Day Training/Habilitation/Activities",
-              "Work Center Vocational Training",
-              "Community-Based Enclave",
-              "Individual Supported Employment",
-              "Youth/School-Age/Transition Programs",
-              "Weekend Program",
-              "Transportation"
-            ]
-          },
-          "description": "What Programs/Services Interest You; checkboxes on the form, select all that apply."
+          "type": "string",
+          "enum": [
+            "Adult Day Training/Habilitation/Activities",
+            "Work Center Vocational Training",
+            "Community-Based Enclave",
+            "Individual Supported Employment",
+            "Youth/School-Age/Transition Programs",
+            "Weekend Program",
+            "Transportation"
+          ],
+          "description": "What Programs/Services Interest You"
         },
         "transportation": {
           "type": "object",
           "properties": {
             "am": { "type": "boolean", "description": "Transportation AM" },
-            "pm": { "type": "boolean", "description": "Transportation PM" }
+            "am_phone": { "type": "string", "description": "Phone number"},
+            "pm": { "type": "boolean", "description": "Transportation PM" },
+            "pm_phone": { "type": "string", "description": "Phone number"}
           }
         },
         "office_use_only": {
@@ -89,11 +80,8 @@
             "location_site": { "type": "string" },
             "start_date": { "type": "string" },
             "service_codes": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": ["DTA", "CBE", "GSE", "ESA", "ISE", "DTT", "DTS", "RSP", "TRA", "TRE"]
-              }
+              "type": "string",
+              "enum": ["DTA", "CBE", "GSE", "ESA", "ISE", "DTT", "DTS", "RSP", "TRA", "TRE"]
             }
           },
           "description": "Gray area for office use only"
@@ -141,12 +129,8 @@
           "type": "object",
           "properties": {
             "guardian_type": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": ["Legal Guardian", "Conservator", "Self-Guardian"],
-                "description": "Checkboxes on the form; select one."
-              }
+              "type": "string",
+              "enum": ["Legal Guardian", "Conservator", "Self-Guardian"]
             },
             "name": { "type": "string" },
             "relationship": { "type": "string" },
@@ -167,12 +151,8 @@
           "type": "object",
           "properties": {
             "guardian_type": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": ["Same as Guardian", "Co-Guardian/Parent"],
-                "description": "Checkboxes on the form; select one."
-              }
+              "type": "string",
+              "enum": ["Same as Guardian(Skip this section)", "Co-Guardian/Parent"]
             },
             "name": { "type": "string" },
             "relationship": { "type": "string" },
