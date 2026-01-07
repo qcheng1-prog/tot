@@ -122,7 +122,45 @@ def render_from_schema(schema, values, key_prefix="review"):
         field_type = field_schema.get("type")
         enum = field_schema.get("enum")
 
-        if field_type == "object":
+        if field == "behavioral_concerns":
+            st.markdown(f"### {label}")
+
+            out[field] = {}
+
+            for concern, concern_schema in field_schema["properties"].items():
+                data = value.get(concern, {}) if isinstance(value, dict) else {}
+
+                checked = st.checkbox(
+                    concern,
+                    value=data.get("checked", False),
+                    key=f"{key}.{concern}.checked"
+                )
+
+                desc = ""
+                freq = ""
+
+                if checked:
+                    desc = st.text_input(
+                        "Describe behavior",
+                        data.get("description", ""),
+                        key=f"{key}.{concern}.desc"
+                    )
+                    freq = st.text_input(
+                        "Frequency",
+                        data.get("frequency", ""),
+                        key=f"{key}.{concern}.freq"
+                    )
+
+                out[field][concern] = {
+                    "checked": checked,
+                    "description": desc,
+                    "frequency": freq
+                }
+
+            return out
+
+
+        elif field_type == "object":
             section_label = field_schema.get("description") or label
             with st.expander(section_label, expanded=True):
                 out[field] = render_from_schema(
@@ -131,21 +169,51 @@ def render_from_schema(schema, values, key_prefix="review"):
                     key
                 )
 
-        elif field_type == "array":
-            if enum:
-                out[field] = st.multiselect(
-                    label,
-                    enum,
-                    default=value or [],
-                    key=key
+        elif field_type == "array" and field_schema.get("items", {}).get("type") == "object":
+            columns = field_schema["items"].get("properties", {}).keys()
+            rows = value if isinstance(value, list) else []
+
+            if not rows:
+                rows = [{col: "" for col in columns}]
+
+            normalized_rows = []
+            for row in rows:
+                normalized_rows.append({
+                    col: row.get(col, "") if isinstance(row, dict) else ""
+                    for col in columns
+                })
+
+            st.markdown(f"**{label}**")
+
+            edited_df = st.data_editor(
+                pd.DataFrame(normalized_rows),
+                num_rows="dynamic",
+                use_container_width=True,
+                key=key
+            )
+
+            out[field] = [
+                r for r in edited_df.to_dict(orient="records")
+                if any(v.strip() for v in r.values())
+            ]
+
+
+        elif enum:
+            selected = set(value if isinstance(value, list) else ([value] if value else []))
+            chosen = []
+
+            st.markdown(f"**{label}**")
+
+            for option in enum:
+                checked = st.checkbox(
+                    option,
+                    value=option in selected,
+                    key=f"{key}.{option}"
                 )
-            else:
-                text = st.text_area(
-                    label,
-                    "\n".join(map(str, value or [])),
-                    key=key
-                )
-                out[field] = [v for v in text.splitlines() if v.strip()]
+                if checked:
+                    chosen.append(option)
+
+            out[field] = chosen
 
         elif field_type == "boolean":
             out[field] = st.checkbox(
@@ -161,6 +229,14 @@ def render_from_schema(schema, values, key_prefix="review"):
                 step=1,
                 key=key
             )
+        
+        elif field_type == "array":
+            text = st.text_area(
+                label,
+                "\n".join(map(str, value or [])),
+                key=key
+            )
+            out[field] = [v for v in text.splitlines() if v.strip()]
 
         else:  # string or fallback
             out[field] = st.text_input(
