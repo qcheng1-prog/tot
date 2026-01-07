@@ -50,12 +50,12 @@
       "properties": {
         "food_preparation": { "type": "string", "enum": ["Regular", "Bite-size", "Puree", "Other"] },
         "food_preparation_other": { "type": "string" },
-        "special_diet": { "type": "boolean" },
+        "special_diet": { "type": "string", "enum": ["Yes", "No"] },
         "special_diet_specify": { "type": "string", "description": "Specify:" },
-        "nutritional_supplements": { "type": "boolean" },
+        "nutritional_supplements": { "type": "string", "enum": ["Yes", "No"] },
         "nutritional_supplements_specify": { "type": "string", "description": "Specify:" },
-        "choke_or_gag_reflex": { "type": "boolean" },
-        "mealtime_assistance_required": { "type": "boolean", "description": "Assistance required during mealtimes (i.e. adapted utensils, positioning, etc.):" },
+        "choke_or_gag_reflex": { "type": "string", "enum": ["Yes", "No"] },
+        "mealtime_assistance_required": { "type": "string", "enum": ["Yes", "No"], "description": "Assistance required during mealtimes (i.e. adapted utensils, positioning, etc.):" },
         "mealtime_assistance_list": { "type": "string", "description": "List:" }
       }
     },
