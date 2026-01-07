@@ -16,11 +16,8 @@
           "type": "object",
           "properties": {
             "disabilities": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": ["Autism", "Epilepsy", "Cerebral Palsy", "Cognitive Impairment", "Other (explain):"]
-              }
+              "type": "string",
+              "enum": ["Autism", "Epilepsy", "Cerebral Palsy", "Cognitive Impairment", "Other (explain):"]
             },
             "other_description": {
               "type": "string",
@@ -41,13 +38,9 @@
           "type": "object",
           "properties": {
             "conditions": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": ["Cancer", "Diabetes", "Heart Disease", "High Blood Pressure", "Mental Illness", "Other (explain):"]
-              },
-              "description": "Checkboxes on form check all that apply."
-            },
+              "type": "string",
+              "enum": ["Cancer", "Diabetes", "Heart Disease", "High Blood Pressure", "Mental Illness", "Other (explain):"]
+          },
             "other_description": {
               "type": "string",
               "description": "If 'Other' selected, specify condition."
@@ -56,46 +49,43 @@
           "description": "Family Medical History: If a member of the family has had any of the following, check the applicable box(es)."
         },
         "individual_medical_history": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "Anemia",
-              "Asthma",
-              "Blood Clots",
-              "Cancer",
-              "Chicken Pox",
-              "Chronic Bronchitis",
-              "Chronic Ear Infection",
-              "Chronic Nose Bleeds",
-              "Diabetes",
-              "Encephalitis",
-              "Gall Bladder Problems",
-              "Gastritis",
-              "Head Trauma/Injury",
-              "Heart Disease/Murmur",
-              "Hepatitis",
-              "High Blood Pressure",
-              "High Fever",
-              "Immune Suppressed Disorder",
-              "Liver Disorder",
-              "Measles",
-              "Meningitis",
-              "Mental Illness",
-              "Migraine Headaches",
-              "Mumps",
-              "Pneumonia",
-              "Polio",
-              "Rheumatic Fever",
-              "Substance Abuse/Addiction",
-              "Thyroid Disorder",
-              "Tuberculosis",
-              "Ulcers",
-              "Valley Fever",
-              "Venereal Disease"
-            ]
-          },
-          "description": "If the individual has or has had any of the following, please check as applicable; checkboxes on form select all that apply."
+          "type": "string",
+          "enum": [
+            "Anemia",
+            "Asthma",
+            "Blood Clots",
+            "Cancer",
+            "Chicken Pox",
+            "Chronic Bronchitis",
+            "Chronic Ear Infection",
+            "Chronic Nose Bleeds",
+            "Diabetes",
+            "Encephalitis",
+            "Gall Bladder Problems",
+            "Gastritis",
+            "Head Trauma/Injury",
+            "Heart Disease/Murmur",
+            "Hepatitis",
+            "High Blood Pressure",
+            "High Fever",
+            "Immune Suppressed Disorder",
+            "Liver Disorder",
+            "Measles",
+            "Meningitis",
+            "Mental Illness",
+            "Migraine Headaches",
+            "Mumps",
+            "Pneumonia",
+            "Polio",
+            "Rheumatic Fever",
+            "Substance Abuse/Addiction",
+            "Thyroid Disorder",
+            "Tuberculosis",
+            "Ulcers",
+            "Valley Fever",
+            "Venereal Disease"
+          ],
+          "description": "If the individual has or has had any of the following (Select all that apply)"
         },
         "immunizations": {
           "type": "object",
@@ -127,14 +117,14 @@
           "properties": {
             "has_allergies": {
               "type": "boolean",
-              "description": "Checkboxes on form"
+              "description": "Has Allergies?"
             },
             "allergy_details": {
               "type": "string",
               "description": "If 'Yes', specify:"
             }
           },
-          "description": "Allergies:"
+          "description": "Allergies"
         },
         "dental_history": {
           "type": "object",
