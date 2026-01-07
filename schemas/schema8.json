@@ -67,6 +67,7 @@
         },
         "academicAndLifeSkills": {
           "type": "object",
+          "description": "Which academic and life skills would be most beneficial for the applicant to spend time improving? Check all that apply:",
           "properties": {
             "skills_to_improve": {
               "type": "array",
@@ -90,11 +91,11 @@
             "other_description": {
               "type": "string",
               "description": "If 'Other' is selected, specify the skill."
-            },
-            "description": "Which academic and life skills would be most beneficial for the applicant to spend time improving? Check all that apply:"
+            }
           }
         }
       }
     }
   }
 }
+
