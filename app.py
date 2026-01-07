@@ -30,59 +30,146 @@ st.set_page_config(
 )
 load_dotenv()
 
-def normalize_for_ui(obj):
+# def normalize_for_ui(obj):
+#     if isinstance(obj, dict) and "value" in obj:
+#         return obj["value"], obj.get("description")
+
+#     if isinstance(obj, dict) and "properties" in obj:
+#         values = {}
+#         descriptions = {}
+#         for k, v in obj["properties"].items():
+#             val, desc = normalize_for_ui(v)
+#             values[k] = val
+#             if desc:
+#                 descriptions[k] = desc
+#         return values, descriptions
+
+#     if isinstance(obj, dict):
+#         values = {}
+#         descriptions = {}
+#         for k, v in obj.items():
+#             if k in ("type", "enum", "items", "required"):
+#                 continue
+#             val, desc = normalize_for_ui(v)
+#             values[k] = val
+#             if desc:
+#                 descriptions[k] = desc
+#         return values, descriptions
+
+#     if isinstance(obj, list):
+#         return obj, None
+
+#     return obj, None
+
+# def materialize_from_schema(schema, extracted):
+#     if not isinstance(schema, dict):
+#         return extracted, schema
+
+#     # Object
+#     if "properties" in schema:
+#         extracted = extracted if isinstance(extracted, dict) else {}
+#         out = {}
+#         for key, subschema in schema["properties"].items():
+#             out[key] = materialize_from_schema(
+#                 subschema,
+#                 extracted.get(key)
+#             )
+#         return out, schema
+
+#     # Array
+#     if schema.get("type") == "array":
+#         return (extracted if isinstance(extracted, list) else []), schema
+
+#     # Scalar
+#     return (extracted if extracted is not None else None), schema
+
+def materialize_from_schema(obj):
+
     if isinstance(obj, dict) and "value" in obj:
-        return obj["value"], obj.get("description")
+        return materialize_from_schema(obj["value"])
 
     if isinstance(obj, dict) and "properties" in obj:
-        values = {}
-        descriptions = {}
-        for k, v in obj["properties"].items():
-            val, desc = normalize_for_ui(v)
-            values[k] = val
-            if desc:
-                descriptions[k] = desc
-        return values, descriptions
+        result = {}
+        for key, val in obj["properties"].items():
+            result[key] = materialize_from_schema(val)
+        return result
+
+    if isinstance(obj, dict) and obj.get("type") == "array":
+        return []
 
     if isinstance(obj, dict):
-        values = {}
-        descriptions = {}
-        for k, v in obj.items():
-            if k in ("type", "enum", "items", "required"):
-                continue
-            val, desc = normalize_for_ui(v)
-            values[k] = val
-            if desc:
-                descriptions[k] = desc
-        return values, descriptions
+        return {
+            k: materialize_from_schema(v)
+            for k, v in obj.items()
+            if k not in {"type", "enum", "description", "items"}
+        }
 
     if isinstance(obj, list):
-        return obj, None
+        return [materialize_from_schema(x) for x in obj]
 
-    return obj, None
+    return obj
 
-def materialize_from_schema(schema, extracted):
-    if not isinstance(schema, dict):
-        return extracted, schema
+def render_from_schema(schema, values, key_prefix="review"):
+    out = {}
 
-    # Object
-    if "properties" in schema:
-        extracted = extracted if isinstance(extracted, dict) else {}
-        out = {}
-        for key, subschema in schema["properties"].items():
-            out[key] = materialize_from_schema(
-                subschema,
-                extracted.get(key)
+    for field, field_schema in schema.get("properties", {}).items():
+        label = field_schema.get("description") or field.replace("_", " ").title()
+        key = f"{key_prefix}.{field}"
+        value = values.get(field)
+        if value == {}:
+            value = None
+
+        field_type = field_schema.get("type")
+        enum = field_schema.get("enum")
+
+        if field_type == "object":
+            section_label = field_schema.get("description") or label
+            with st.expander(section_label, expanded=True):
+                out[field] = render_from_schema(
+                    field_schema,
+                    value or {},
+                    key
+                )
+
+        elif field_type == "array":
+            if enum:
+                out[field] = st.multiselect(
+                    label,
+                    enum,
+                    default=value or [],
+                    key=key
+                )
+            else:
+                text = st.text_area(
+                    label,
+                    "\n".join(map(str, value or [])),
+                    key=key
+                )
+                out[field] = [v for v in text.splitlines() if v.strip()]
+
+        elif field_type == "boolean":
+            out[field] = st.checkbox(
+                label,
+                value=bool(value),
+                key=key
             )
-        return out, schema
 
-    # Array
-    if schema.get("type") == "array":
-        return (extracted if isinstance(extracted, list) else []), schema
+        elif field_type == "integer":
+            out[field] = st.number_input(
+                label,
+                value=value or 0,
+                step=1,
+                key=key
+            )
 
-    # Scalar
-    return (extracted if extracted is not None else None), schema
+        else:  # string or fallback
+            out[field] = st.text_input(
+                label,
+                "" if value is None else str(value),
+                key=key
+            )
 
+    return out
 
 
 def init_state():
@@ -261,10 +348,18 @@ with tab_pages:
                     json.dumps(schema),
                 )
 
-                all_page_data.append(page_json)
+                # all_page_data.append(page_json)
+                all_page_data.append({
+                    "page": page_num,
+                    "data": page_json
+                })
                 progress.progress(idx / len(selected))
 
-            st.session_state.extracted_data = merge_page_results(all_page_data)
+            # st.session_state.extracted_data = merge_page_results(all_page_data)
+            st.session_state.extracted_data = {
+                item["page"]: item["data"]
+                for item in all_page_data
+            }
             st.session_state.extraction_complete = True
             st.success("Extraction complete.")
 
@@ -277,114 +372,113 @@ with tab_review:
 
     st.header("✏️ Review Extracted Form Data")
 
+    # if "review_data" not in st.session_state:
+    #     full_data = {}
+
+    #     selected_pages = st.session_state.selected_pages
+
+    #     # for page_num in sorted(selected_pages):
+    #     #     schema = schemas[page_num]
+    #     #     extracted = st.session_state.extracted_data 
+    #     #     st.success(extracted)
+    #     #     print(extracted)
+    #     #     page_data= materialize_from_schema(extracted)
+    #     #     full_data.update(page_data)
+
+    #     st.session_state.review_data = full_data
+
     if "review_data" not in st.session_state:
-        full_data = {}
-
-        selected_pages = st.session_state.selected_pages
-
-        for page_num in sorted(selected_pages):
-            schema = schemas[page_num]
-            extracted = st.session_state.extracted_data 
-            #st.success(extracted)
-            print(extracted)
-            page_data, _ = materialize_from_schema(schema, extracted)
-            full_data.update(page_data)
-
-        st.session_state.review_data = full_data
-
+        st.session_state.review_data = {
+            page_num: materialize_from_schema(page_data)
+            for page_num, page_data in st.session_state.extracted_data.items()
+        }
+    
     review_data = st.session_state.review_data
+
+    available_pages = sorted(review_data.keys())
+
+    selected_page = st.selectbox(
+        "Select page to review",
+        available_pages,
+        format_func=lambda p: f"{p}"
+    )
 
     def pretty_label(label: str) -> str:
         return label.replace("_", " ").strip().title()
 
-    def render_scalar(label, value, schema, key):
-        field_type = schema.get("type")
+    # def render_scalar(label, value, schema, key):
+        # field_type = schema.get("type")
 
-        if field_type == "boolean":
-            return st.checkbox(label, value=value or False, key=key)
+        # if field_type == "boolean":
+        #     return st.checkbox(label, value=value or False, key=key)
 
-        if field_type == "integer":
-            return st.number_input(label, value=value or 0, step=1, key=key)
+        # if field_type == "integer":
+        #     return st.number_input(label, value=value or 0, step=1, key=key)
 
-        if "enum" in schema:
-            if schema.get("type") == "array":
-                return st.multiselect(label, schema["enum"], default=value or [], key=key)
-            return st.selectbox(
-                label,
-                schema["enum"],
-                index=schema["enum"].index(value) if value in schema["enum"] else 0,
-                key=key
-            )
+        # if "enum" in schema:
+        #     if schema.get("type") == "array":
+        #         return st.multiselect(label, schema["enum"], default=value or [], key=key)
+        #     return st.selectbox(
+        #         label,
+        #         schema["enum"],
+        #         index=schema["enum"].index(value) if value in schema["enum"] else 0,
+        #         key=key
+        #     )
 
-        return st.text_input(label, value="" if value is None else str(value), key=key)
+        # return st.text_input(label, value="" if value is None else str(value), key=key)
 
-    def render_any(label, value_schema, key, depth=0):
-        # Check if value_schema is actually a tuple/list of 2
-        #if not isinstance(value_schema, (tuple, list)) or len(value_schema) != 2:
-        #    st.error(f"Data format error in section: {label}. Expected (value, schema).")
-        #    return None
+    # def render_any(label, value, schema, key, depth=0):
+        # if isinstance(value, dict):
+        #     if depth == 0:
+        #         st.subheader(label)
+        #     elif depth == 1:
+        #         st.markdown(f"**{label}**")
+        #     else:
+        #         st.markdown(f"*{label}*")
 
-        value, schema = value_schema
+        #     out = {}
+        #     for k, v in value.items():
+        #         field_schema = schema.get("properties", {}).get(k, {})
+        #         out[k] = render_any(
+        #             pretty_label(k),
+        #             v,
+        #             field_schema,
+        #             f"{key}.{k}",
+        #             depth + 1
+        #         )
+        #     return out
 
-        if isinstance(value, dict):
-            if depth == 0:
-                st.subheader(label)
-            elif depth == 1:
-                st.markdown(f"**{label}**")
-            else:
-                st.markdown(f"*{label}*")
+        # if isinstance(value, list):
+        #     if schema.get("type") == "array" and "enum" in schema:
+        #         return st.multiselect(
+        #             label,
+        #             schema["enum"],
+        #             default=value,
+        #             key=key
+        #         )
+        #     return st.text_area(
+        #         label,
+        #         value="\n".join(map(str, value)),
+        #         key=key
+        #     ).splitlines()
 
-            out = {}
-            for k in value.keys():
-                out[k] = render_any(
-                    pretty_label(k),
-                    value[k],
-                    f"{key}.{k}",
-                    depth + 1
-                )
-            return out
-
-        if isinstance(value, list):
-            if schema.get("items", {}).get("type") == "object":
-                rows = []
-                for idx, row in enumerate(value):
-                    edited_row = {}
-                    row = row if isinstance(row, dict) else {}
-                    for field, field_schema in schema["items"]["properties"].items():
-                        edited_row[field] = render_scalar(
-                            pretty_label(field),
-                            row.get(field),
-                            field_schema,
-                            f"{key}.{idx}.{field}"
-                        )
-                    rows.append(edited_row)
-                return rows
-
-            return st.multiselect(
-                label,
-                schema.get("enum", []),
-                default=value or [],
-                key=key
-            ) if "enum" in schema else st.text_area(
-                label,
-                value="\n".join(value),
-                key=key
-            ).splitlines()
-
-        return render_scalar(label, value, schema, key)
+        # return render_scalar(label, value, schema, key)
 
     edited_output = {}
 
-    for section in review_data.keys():
+    # for section in review_data.keys():
         # Temporary debug line
         #print(f"DEBUG: Processing {section}, value is: {edited_output[section]}")
         
-        edited_output[section] = render_any(
-            pretty_label(section),
-            review_data[section],
-            f"review.{section}",
-            depth=0
-        )
+    page_num = selected_page
+
+    edited_output = {}
+    edited_output[page_num] = render_from_schema(
+        schemas[page_num],
+        review_data[page_num],
+        key_prefix=f"review.page{page_num}"
+    )
+
 
     col1, col2 = st.columns(2)
 
@@ -431,7 +525,11 @@ with tab_export:
                     items[new_key] = v
             return items
 
-        flat_data = flatten_json(edited_data)
+        merged = {}
+        for page_data in edited_data.values():
+            merged.update(page_data)
+
+        flat_data = flatten_json(merged)
         extracted_df = pd.DataFrame([flat_data])
 
         idf_df = pd.read_excel("IDF_Import_ProviderExcel_TOT-AZ_20251019.xlsx") #idf_path)
