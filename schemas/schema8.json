@@ -25,44 +25,35 @@
           "description": "What is the highest number the applicant can count to without assistance?"
         },
         "math_comprehension": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "Completes basic addition and subtraction problems",
-              "Completes basic multiplication and division problems",
-              "Math skills are equivalent to a freshman in high school",
-              "Math skills are equivalent to a high school graduate",
-              "Math skills are at a post high school level"
-            ]
-          },
+          "type": "string",
+          "enum": [
+            "Completes basic addition and subtraction problems",
+            "Completes basic multiplication and division problems",
+            "Math skills are equivalent to a freshman in high school",
+            "Math skills are equivalent to a high school graduate",
+            "Math skills are at a post high school level"
+          ],
           "description": "What is the applicant's current math comprehension?; Checkboxes on the form; select all that apply."
         },
         "money_management_skills": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "Can count bills",
-              "Can count change",
-              "Understands how to make a purchase in a store using money or credit cards (may need assistance in counting the money)",
-              "Can plan a budget for at least one shopping trip"
-            ]
-          },
+          "type": "string",
+          "enum": [
+            "Can count bills",
+            "Can count change",
+            "Understands how to make a purchase in a store using money or credit cards (may need assistance in counting the money)",
+            "Can plan a budget for at least one shopping trip"
+          ],
           "description": "Please check all of the following that describes the applicant's money management skills:"
         },
         "reading_comprehension": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "No ability to read",
-              "Reads sight words and identifies symbols (stop signs, restroom signs, etc.)",
-              "Simple reading (around the level of a 3rd grader)",
-              "Average reading (at least middle school or junior high level)",
-              "Advanced reading (post high school level)"
-            ]
-          },
+          "type": "string",
+          "enum": [
+            "No ability to read",
+            "Reads sight words and identifies symbols (stop signs, restroom signs, etc.)",
+            "Simple reading (around the level of a 3rd grader)",
+            "Average reading (at least middle school or junior high level)",
+            "Advanced reading (post high school level)"
+          ],
           "description": "What is the applicant's current reading comprehension?"
         },
         "academicAndLifeSkills": {
@@ -70,32 +61,26 @@
           "description": "Which academic and life skills would be most beneficial for the applicant to spend time improving? Check all that apply:",
           "properties": {
             "skills_to_improve": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "Reading",
-                  "Writing",
-                  "Math",
-                  "Money management",
-                  "Communicating with others more clearly",
-                  "Communicating with others in a more positive way",
-                  "Cooking",
-                  "Cleaning (house work)",
-                  "Safety skills",
-                  "Other"
-                ]
-              },
-              "description": "Select all that apply."
+              "type": "string",
+              "enum": [
+                "Reading",
+                "Writing",
+                "Math",
+                "Money management",
+                "Communicating with others more clearly",
+                "Communicating with others in a more positive way",
+                "Cooking",
+                "Cleaning (house work)",
+                "Safety skills",
+                "Other"
+              ]
             },
             "other_description": {
               "type": "string",
               "description": "If 'Other' is selected, specify the skill."
-            }
-          }
+            }          }
         }
       }
     }
   }
 }
-
