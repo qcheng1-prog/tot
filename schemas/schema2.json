@@ -17,13 +17,13 @@
               "policy_number": { "type": "string" }
             }
           },
-          "description": "Supports multiple insurance entries"
+          "description": "Insurance Details"
         },
         "height": { "type": "string" },
         "weight": { "type": "string" },
         "seizures": {
           "type": "boolean",
-          "description": "Checkboxes on the form; select one."
+          "description": "Has Seizures"
         },
         "chronic_conditions": {
           "type": "string",
@@ -40,15 +40,11 @@
       "properties": {
         "mobility_status": {
           "type": "string",
-          "enum": ["Fully Ambulatory", "Independent with Wheelchair", "Needs Full Assistance"],
-          "description": "Checkboxes on the form; select one."
+          "enum": ["Fully Ambulatory", "Independent with Wheelchair", "Needs Full Assistance"]
         },
         "walks_with_assistance": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": ["Person", "Equipment"]
-          }
+          "type": "string",
+          "enum": ["Person", "Equipment"]
         },
         "assistance_description": {
           "type": "string",
@@ -61,16 +57,12 @@
       "properties": {
         "special_dietary_requirements": { "type": "string" },
         "allergies": {
-          "type": "string",
-          "description": "Foods, medications, or other allergies"
+          "type": "string"
         },
         "eating_drinking_practices": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": ["Independent (All Foods)", "Soft Foods Only", "With Adaptive Equipment", "Requires Assistance and/or Supervision"]
-          },
-          "description": "Checkboxes on the form; select all that apply."
+          "type": "string",
+          "enum": ["Independent (All Foods)", "Soft Foods Only", "With Adaptive Equipment", "Requires Assistance and/or Supervision"],
+          "description": "Eating & Drinking Practices"
         },
         "adaptive_equipment_description": { "type": "string" },
         "assistance_supervision_description": { "type": "string" }
@@ -81,14 +73,11 @@
       "properties": {
         "fine_motor_impairments": {
           "type": "string",
-          "description": "Include options for assistance (hand over hand, modified utensils, etc.)"
+          "description": "Fine motor impairments (Include options for assistance (hand over hand, modified utensils, etc.))"
         },
         "toileting_menstrual_care": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": ["Independent", "Occasional or Regular Reminders", "Requires Assistance"]
-          }
+          "type": "string",
+          "enum": ["Independent", "Occasional or Regular Reminders", "Requires Assistance"]
         },
         "toileting_assistance_description": { "type": "string" }
       }
