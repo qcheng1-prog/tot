@@ -3,7 +3,7 @@ import streamlit as st
 from authlib.integrations.requests_client import OAuth2Session
 from auth.models import CurrentUser
 from auth.providers.base import OAuthProvider
-
+from typing import Optional
 ALLOWED_DOMAINS = {"theopportunitytree.org"}
 
 class MicrosoftProvider(OAuthProvider):
