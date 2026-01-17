@@ -27,7 +27,7 @@ class AuthManager:
     
         # 3. Stop the rest of the script so it doesn't render more buttons
         #st.write(f"Redirecting to {provider_name.title()}...")
-        st.stop()
+        #st.stop()
         
     @classmethod
     def handle_callback(cls):
