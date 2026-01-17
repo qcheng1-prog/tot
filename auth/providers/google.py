@@ -17,7 +17,7 @@ class GoogleProvider(OAuthProvider):
 
     REDIRECT_URI = os.getenv(
         "GOOGLE_REDIRECT_URI",
-        "https://tot-uncc.streamlit.app/oauth/callback",
+        "https://tot-uncc.streamlit.app",  #/oauth/callback",
     )
 
     CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
