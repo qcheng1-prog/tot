@@ -271,7 +271,8 @@ def render_from_schema(schema, values, key_prefix="review"):
 
     return out
 
-
+# Ensures a clean session state on first run.
+# Tracks PDFs, page selections, extracted data, etc.
 def init_state():
     st.session_state.pdf_pages = None
     st.session_state.last_pdf = None
@@ -295,7 +296,12 @@ if "initialized" not in st.session_state:
 #    user = get_current_user()
 
 # ============================================================
-# Authentication (Google / Microsoft)  QC
+# Authentication (Google / Microsoft)  Q
+# CHandles OAuth login first.
+# Shows buttons for Google / Microsoft login if no user.
+# Stops the app until authentication completes.
+# After login, user contains info like name, email, picture.
+# Sidebar also shows user info and a logout button.
 # ============================================================
 # 1️⃣ Always handle OAuth callback FIRST
 AuthManager.handle_callback()
@@ -320,6 +326,7 @@ with st.sidebar:
 
     st.divider()
 
+    # PDF upload & page conversion
     uploaded_pdf = st.file_uploader("📤 Upload filled PDF form", type=["pdf"])
 
     #if st.button("Log out"): #QC removed
@@ -337,7 +344,13 @@ except Exception as e:
     st.error(f"Failed to initialize LLM: {e}")
     st.stop()
 
-
+#Tabs: Upload / Pages / Review / Export
+#Upload tab
+#Pages tab
+#Shows all pages as images.
+#Lets user select/deselect pages.
+#Confirm selection.
+#Extracts data from selected pages using OCR + LLM.
 if uploaded_pdf and uploaded_pdf.name != st.session_state.last_pdf:
     init_state()
 
@@ -473,7 +486,14 @@ with tab_pages:
             st.success("Extraction complete.")
 
 
-
+#Review tab
+#Allows editing the extracted data.
+#Uses render_from_schema to generate interactive forms.
+#Supports:
+#Nested objects
+#Lists
+#Behavioral concerns (checkbox + description/frequency)
+#Can confirm changes or apply to final output.
 with tab_review:
     if not st.session_state.get("extraction_complete"):
         st.info("Run extraction first.")
@@ -602,7 +622,13 @@ with tab_review:
             st.success("Changes applied to extracted data.")
 
 
-
+#Export tab
+#Flattens extracted data to match Therap Excel schema.
+#Uses mapping JSON (field_mapping.json) to map fields.
+#Generates two Excel files:
+#Import-ready
+#Extra fields
+#Provides Streamlit download buttons.
 with tab_export:
     if not st.session_state.extraction_complete:
         st.info("Complete extraction first.")
