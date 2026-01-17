@@ -303,21 +303,35 @@ if "initialized" not in st.session_state:
 # After login, user contains info like name, email, picture.
 # Sidebar also shows user info and a logout button.
 # ============================================================
-# 1️⃣ Always handle OAuth callback FIRST
+# 1️⃣ Handle callback first
 AuthManager.handle_callback()
-# 2️⃣ Get current user (if authenticated)
+
+# 2️⃣ Get user
 user = AuthManager.current_user()
-# 3️⃣ Not authenticated → show login UI
+
+# 3️⃣ Define callback functions
+def login_google():
+    # Generate the URL and state
+    url = AuthManager.start_login("google")
+    # Use JavaScript to redirect immediately
+    st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
+    st.write("Redirecting...")
+    st.stop()
+def login_microsoft():
+    url = AuthManager.start_login("microsoft")
+    st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
+    st.write("Redirecting...")
+    st.stop()
+# 4️⃣ UI Logic
 if not user:
     st.title("Sign in to continue")
-    if st.button("Continue with Google", use_container_width=False):
-        AuthManager.login("google")
-        #st.rerun()  # <--- Forces immediate update
-    if st.button("Continue with Microsoft", use_container_width=False):
-        AuthManager.login("microsoft")
-        st.rerun()  # <--- Forces immediate update
+    
+    # We use on_click so the redirect logic happens instantly
+    st.button("Continue with Google", on_click=login_google)
+    st.button("Continue with Microsoft", on_click=login_microsoft)
+    
     st.stop()
-# 4️⃣ Authenticated app below
+    
 st.write(f"Welcome, {user.name}")
 
 with st.sidebar:
