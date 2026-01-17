@@ -312,7 +312,7 @@ if not user:
     st.title("Sign in to continue")
     if st.button("Continue with Google", use_container_width=False):
         AuthManager.login("google")
-        st.rerun()  # <--- Forces immediate update
+        #st.rerun()  # <--- Forces immediate update
     if st.button("Continue with Microsoft", use_container_width=False):
         AuthManager.login("microsoft")
         st.rerun()  # <--- Forces immediate update
