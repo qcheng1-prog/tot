@@ -38,7 +38,7 @@ class GoogleProvider(OAuthProvider):
         returned_state = q.get("state")
         code = q.get("code")
         
-        store = _pkce_store()
+        store = self._pkce_store()
 
         # Optional: prune old entries (10 min)
         now = time.time()
