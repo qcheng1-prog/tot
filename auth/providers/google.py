@@ -85,7 +85,7 @@ class GoogleProvider(OAuthProvider):
         return user
         
     @st.cache_resource
-    def _pkce_store():
+    def _pkce_store(self):
         # state -> {"verifier": str, "ts": float}
         return {}
         
