@@ -11,20 +11,23 @@ class AuthManager:
 
     @classmethod
     def login(cls, provider_name: str):
-        # 1. Get the URL from the provider
+        # 1. Generate the URL (This sets the 'state' in session_state)
         url = cls.PROVIDERS[provider_name].start_login()
     
-        # 2. Use a JavaScript redirect to force the browser to leave IMMEDIATELY
-        # This prevents the user from seeing a second "Continue" link
-        js = f"""
-        <script>
-            window.location.href = "{url}";
-        </script>
-        """
-        st.components.v1.html(js, height=0)
+        # 2. Use JavaScript to redirect the browser IMMEDIATELY
+        # window.parent is used because Streamlit apps run in an iframe
+        st.components.v1.html(
+            f"""
+            <script>
+                window.parent.location.href = "{url}";
+            </script>
+            """,
+            height=0,
+        )
     
-        # 3. Fallback for browsers with JS blocked
-        st.markdown(f"Redirecting to {provider_name.title()}... [Click here if not redirected]({url})")
+        # 3. Stop the rest of the script so it doesn't render more buttons
+        st.write(f"Redirecting to {provider_name.title()}...")
+        st.stop()
         
     @classmethod
     def handle_callback(cls):
