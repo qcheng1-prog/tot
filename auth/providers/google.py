@@ -30,7 +30,8 @@ class GoogleProvider(OAuthProvider):
 
     def handle_callback(self) -> Optional[CurrentUser]:
         # Streamlit query params
-        q = st.experimental_get_query_params()
+        #q = st.experimental_get_query_params()
+        q = st.query_params
 
         if "code" not in q:
             return None
