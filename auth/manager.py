@@ -13,6 +13,7 @@ class AuthManager:
     def login(cls, provider_name: str):
         st.write("auth manager login()")
         url = cls.PROVIDERS[provider_name].start_login()
+        st.write(url)
         st.markdown(f"[Continue with {provider_name.title()}]({url})")
 
     @classmethod
