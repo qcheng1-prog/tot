@@ -313,13 +313,25 @@ user = AuthManager.current_user()
 if not user:
     st.title("Sign in to continue")
     
-    # Clicking this button now triggers the JS redirect immediately
-    if st.button("Continue with Google"):
-        AuthManager.login("google")
-        
-    if st.button("Continue with Microsoft"):
-        AuthManager.login("microsoft")
-        
+    # Generate the URL only once
+    if "google_url" not in st.session_state:
+        st.session_state.google_url = AuthManager.PROVIDERS["google"].start_login()
+    
+    # Create a link that LOOKS like a button
+    st.markdown(
+        f"""
+        <a href="{st.session_state.google_url}" target="_self" style="
+            text-decoration: none;
+            color: white;
+            background-color: #4285F4;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: bold;
+        ">Continue with Google</a>
+        """,
+        unsafe_allow_html=True
+    )
     st.stop()
     
 st.write(f"Welcome, {user.name}")
