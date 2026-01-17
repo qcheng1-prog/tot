@@ -1,0 +1,62 @@
+import os, time
+import streamlit as st
+from authlib.integrations.requests_client import OAuth2Session
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from auth.models import CurrentUser
+from auth.providers.base import OAuthProvider
+
+ALLOWED_DOMAINS = {"charlotte.edu"}
+
+class GoogleProvider(OAuthProvider):
+
+    AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+    TOKEN_URL = "https://oauth2.googleapis.com/token"
+    SCOPE = "openid email profile"
+    REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+
+    def start_login(self) -> str:
+        sess = OAuth2Session(
+            client_id=os.getenv("GOOGLE_CLIENT_ID"),
+            scope=self.SCOPE,
+            redirect_uri=self.REDIRECT_URI,
+        )
+        uri, _ = sess.create_authorization_url(self.AUTH_URL, prompt="consent")
+        return uri
+
+    def handle_callback(self) -> Optional[CurrentUser]:
+        q = st.query_params
+        if "code" not in q:
+            return None
+
+        sess = OAuth2Session(
+            client_id=os.getenv("GOOGLE_CLIENT_ID"),
+            redirect_uri=self.REDIRECT_URI,
+        )
+
+        token = sess.fetch_token(
+            self.TOKEN_URL,
+            code=q["code"],
+            client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+        )
+
+        idinfo = id_token.verify_oauth2_token(
+            token["id_token"],
+            requests.Request(),
+            os.getenv("GOOGLE_CLIENT_ID"),
+        )
+
+        email = idinfo["email"]
+        domain = email.split("@")[-1]
+
+        if domain not in ALLOWED_DOMAINS:
+            st.error("Unauthorized domain.")
+            return None
+
+        return CurrentUser(
+            email=email,
+            name=idinfo.get("name", email),
+            picture=idinfo.get("picture"),
+            sub=idinfo.get("sub"),
+            provider="google",
+        )
