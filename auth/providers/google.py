@@ -33,8 +33,8 @@ class GoogleProvider(OAuthProvider):
         #q = st.query_params
         #if "code" not in q or "state" not in q:
         #    return None
-        query_params = st.experimental_get_query_params()
-        code = query_params.get("code", [None])[0]
+        q = st.query_params #st.experimental_get_query_params()
+        code = st.experimental_get_query_params().get("code", [None])[0]
         returned_state = q.get("state")
         code = q.get("code")
         
