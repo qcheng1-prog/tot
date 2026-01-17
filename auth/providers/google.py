@@ -17,8 +17,8 @@ class GoogleProvider(OAuthProvider):
     
     # Fallback to localhost if environment variable is not set
     #REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8501/oauth/callback") #"https://tot-uncc.streamlit.app") #/oauth/callback" )
-    #REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://tot-uncc.streamlit.app/oauth/callback")
-    REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://tot-uncc.streamlit.app/")
+    REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://tot-uncc.streamlit.app/oauth/callback")
+    #REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://tot-uncc.streamlit.app/")
     def start_login(self) -> str:
         sess = OAuth2Session(
             client_id=os.getenv("GOOGLE_CLIENT_ID"),
