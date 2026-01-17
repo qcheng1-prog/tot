@@ -310,26 +310,16 @@ AuthManager.handle_callback()
 user = AuthManager.current_user()
 
 # 3️⃣ Define callback functions
-def login_google():
-    # Generate the URL and state
-    url = AuthManager.login("google")
-    # Use JavaScript to redirect immediately
-    st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
-    st.write("Redirecting...")
-    st.stop()
-def login_microsoft():
-    url = AuthManager.login("microsoft")
-    st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
-    st.write("Redirecting...")
-    st.stop()
-# 4️⃣ UI Logic
 if not user:
     st.title("Sign in to continue")
     
-    # We use on_click so the redirect logic happens instantly
-    st.button("Continue with Google", on_click=login_google)
-    st.button("Continue with Microsoft", on_click=login_microsoft)
-    
+    # Clicking this button now triggers the JS redirect immediately
+    if st.button("Continue with Google"):
+        AuthManager.login("google")
+        
+    if st.button("Continue with Microsoft"):
+        AuthManager.login("microsoft")
+        
     st.stop()
     
 st.write(f"Welcome, {user.name}")
