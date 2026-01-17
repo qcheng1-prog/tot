@@ -312,13 +312,13 @@ user = AuthManager.current_user()
 # 3️⃣ Define callback functions
 def login_google():
     # Generate the URL and state
-    url = AuthManager.start_login("google")
+    url = AuthManager.login("google")
     # Use JavaScript to redirect immediately
     st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
     st.write("Redirecting...")
     st.stop()
 def login_microsoft():
-    url = AuthManager.start_login("microsoft")
+    url = AuthManager.login("microsoft")
     st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
     st.write("Redirecting...")
     st.stop()
