@@ -17,13 +17,13 @@ class AuthManager:
     @classmethod
     def handle_callback(cls):
         # ⛔ Already logged in → skip OAuth logic
-        st.write("handle_callback()\n")
-        st.write(st.session_state)
+        #st.write("handle_callback()\n")
+        #st.write(st.session_state)
         if "current_user" in st.session_state:
             return st.session_state["current_user"]
         for provider in cls.PROVIDERS.values():
             user = provider.handle_callback()
-            st.write(user)
+            #st.write(user)
             if user:
                 # 1️⃣ Persist authenticated user
                 st.session_state["current_user"] = user
