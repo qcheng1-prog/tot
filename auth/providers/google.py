@@ -50,7 +50,7 @@ class GoogleProvider(OAuthProvider):
 
         entry = store.get(returned_state)
         if not entry:
-            st.error("Invalid login state.")
+            st.error("Invalid login state----------")
             return None
 
         verifier = entry["verifier"]
