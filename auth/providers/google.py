@@ -27,7 +27,7 @@ class GoogleProvider(OAuthProvider):
     # Step 1: Start login (redirect user to Google)
     # ------------------------------------------------------------------
     def start_login(self) -> str:
-        st.write("google - start_login()")
+        #st.write("google - start_login()")
         sess = OAuth2Session(
             client_id=self.CLIENT_ID,
             scope=self.SCOPE,
