@@ -5,7 +5,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from auth.models import CurrentUser
 from auth.providers.base import OAuthProvider
-
+from typing import Optional
 ALLOWED_DOMAINS = {"charlotte.edu"}
 
 class GoogleProvider(OAuthProvider):
