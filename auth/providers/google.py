@@ -27,6 +27,7 @@ class GoogleProvider(OAuthProvider):
     # Step 1: Start login (redirect user to Google)
     # ------------------------------------------------------------------
     def start_login(self) -> str:
+        st.write("google - start_login()")
         sess = OAuth2Session(
             client_id=self.CLIENT_ID,
             scope=self.SCOPE,
@@ -47,6 +48,7 @@ class GoogleProvider(OAuthProvider):
     # Step 2: Handle callback from Google
     # ------------------------------------------------------------------
     def handle_callback(self) -> Optional[CurrentUser]:
+        st.write("google - handle_callback()")
         q = st.query_params
 
         code = q.get("code")
