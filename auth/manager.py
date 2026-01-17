@@ -20,7 +20,7 @@ class AuthManager:
         st.write(st.session_state)
         if "current_user" in st.session_state:
             return st.session_state["current_user"]
-        for provider in cls.PROVIDERS.values():)
+        for provider in cls.PROVIDERS.values():
             user = provider.handle_callback()
             st.write(user)
             if user:
