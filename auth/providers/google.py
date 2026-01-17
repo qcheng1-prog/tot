@@ -1,4 +1,4 @@
-import os, time
+import os
 import streamlit as st
 from authlib.integrations.requests_client import OAuth2Session
 from google.oauth2 import id_token
@@ -6,14 +6,18 @@ from google.auth.transport import requests
 from auth.models import CurrentUser
 from auth.providers.base import OAuthProvider
 from typing import Optional
+
 ALLOWED_DOMAINS = {"charlotte.edu"}
+
 
 class GoogleProvider(OAuthProvider):
 
     AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
     TOKEN_URL = "https://oauth2.googleapis.com/token"
     SCOPE = "openid email profile"
-    REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+    
+    # Fallback to localhost if environment variable is not set
+    REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8501/oauth/callback")
 
     def start_login(self) -> str:
         sess = OAuth2Session(
@@ -25,7 +29,9 @@ class GoogleProvider(OAuthProvider):
         return uri
 
     def handle_callback(self) -> Optional[CurrentUser]:
-        q = st.query_params
+        # Streamlit query params
+        q = st.experimental_get_query_params()
+
         if "code" not in q:
             return None
 
@@ -34,9 +40,12 @@ class GoogleProvider(OAuthProvider):
             redirect_uri=self.REDIRECT_URI,
         )
 
+        # Authlib requires code as a string
+        code = q["code"][0] if isinstance(q["code"], list) else q["code"]
+
         token = sess.fetch_token(
             self.TOKEN_URL,
-            code=q["code"],
+            code=code,
             client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
         )
 
