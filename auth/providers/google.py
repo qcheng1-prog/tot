@@ -83,7 +83,11 @@ class GoogleProvider(OAuthProvider):
         st.query_params.clear()
 
         return user
-    
+    @st.cache_resource
+    def _pkce_store():
+        # state -> {"verifier": str, "ts": float}
+        return {}
+        
     def handle_callback_old(self) -> Optional[CurrentUser]:
         # Streamlit query params
         #q = st.experimental_get_query_params()
