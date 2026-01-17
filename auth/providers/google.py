@@ -77,12 +77,11 @@ class GoogleProvider(OAuthProvider):
             sub=idinfo.get("sub"),
         )
 
-        # Persist logged-in user
-        st.session_state["current_user"] = user
-
+        # Persist logged-in user #QC Removed
+        #st.session_state["current_user"] = user
         # One-time use: remove verifier + clear query params
-        store.pop(returned_state, None)
-        st.query_params.clear()
+        #store.pop(returned_state, None)
+        #st.query_params.clear()
 
         return user
         
