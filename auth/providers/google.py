@@ -6,6 +6,8 @@ from google.auth.transport import requests
 from auth.models import CurrentUser
 from auth.providers.base import OAuthProvider
 from typing import Optional
+import base64, hashlib, secrets, time
+from dataclasses import dataclass
 
 ALLOWED_DOMAINS = {"charlotte.edu"}
 
