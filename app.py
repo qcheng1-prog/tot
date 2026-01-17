@@ -273,11 +273,30 @@ if "initialized" not in st.session_state:
 #if not user:
 #    user = get_current_user()
 
-user = AuthManager.current_user()  #QC added
+#user = AuthManager.current_user()  #QC added => #QC removed
+#if not user:
+#    AuthManager.handle_callback()
+ #   user = AuthManager.current_user()
+#if not user:  #QC added
+ #   st.title("Sign in to continue")
+  #  AuthManager.login("google")
+   # AuthManager.login("microsoft")
+    #st.stop()
+# 1️⃣ Always handle OAuth callback first #QC added
+AuthManager.handle_callback()
+# 2️⃣ Get authenticated user
+user = AuthManager.current_user()
+# 3️⃣ Not authenticated → show login UI
 if not user:
-    AuthManager.handle_callback()
-    user = AuthManager.current_user()
-    
+    st.title("Sign in to continue")
+    if st.button("Continue with Google"):
+        AuthManager.login("google")
+    if st.button("Continue with Microsoft"):
+        AuthManager.login("microsoft")
+    st.stop()
+# 4️⃣ Authenticated app below
+st.write("Welcome", user.name)
+
 #if not user: #QC removed
 #    st.title("Sign in to continue")
 #    st.caption("Use your Google account.")
@@ -285,11 +304,6 @@ if not user:
 #        st.session_state["_auth_url"] = start_google_login()
 #    st.link_button("Continue with Google", st.session_state["_auth_url"], type="primary")
 #    st.stop()
-if not user:  #QC added
-    st.title("Sign in to continue")
-    AuthManager.login("google")
-    AuthManager.login("microsoft")
-    st.stop()
     
 with st.sidebar:
     if user.picture:
