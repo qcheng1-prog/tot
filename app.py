@@ -311,7 +311,6 @@ user = AuthManager.current_user()
 
 # 3️⃣ Define callback functions
 if not user:
-if not user:
     st.title("Sign in to continue")
     
     if st.button("Continue with Google"):
