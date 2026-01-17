@@ -63,7 +63,7 @@ def start_google_login() -> str:
     store = _pkce_store()
     store[state] = {"verifier": verifier, "ts": time.time()}
 
-    ALLOWED_DOMAIN = "uncc.edu" # {"charlotte.edu", "theopportunitytree.org"}
+    ALLOWED_DOMAIN = "outlook.com" # {"charlotte.edu", "theopportunitytree.org"}
     sess = _oauth_session(client_id)
     uri, _ = sess.create_authorization_url(
         GOOGLE_AUTHORIZATION_ENDPOINT,
@@ -116,7 +116,7 @@ def handle_oauth_callback() -> Optional[CurrentUser]:
     )
     
     # --- Domain enforcement (after token verification) --- # QC Added
-    ALLOWED_DOMAINS = {"uncc.edu", "theopportunitytree.org"}
+    ALLOWED_DOMAINS = {"outlook.com", "theopportunitytree.org"}
     email = idinfo.get("email")
     email_verified = idinfo.get("email_verified", False)
     if not email_verified:
