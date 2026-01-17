@@ -31,7 +31,7 @@ class AuthManager:
         
     @classmethod
     def handle_callback(cls):
-        st.write("auth manager handle_callback()")
+        #st.write("auth manager handle_callback()")
         # ⛔ Already logged in → skip OAuth logic
         #st.write("handle_callback()\n")
         #st.write(st.session_state)
