@@ -48,7 +48,7 @@ class GoogleProvider(OAuthProvider):
     # Step 2: Handle callback from Google
     # ------------------------------------------------------------------
     def handle_callback(self) -> Optional[CurrentUser]:
-        st.write("google - handle_callback()")
+        #st.write("google - handle_callback()")
         q = st.query_params
 
         code = q.get("code")
