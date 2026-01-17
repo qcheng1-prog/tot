@@ -284,6 +284,9 @@ if "initialized" not in st.session_state:
     #st.stop()
 # 1️⃣ Always handle OAuth callback first #QC added
 AuthManager.handle_callback()
+# 🔍 DEBUG (temporary)
+st.write("Session:", st.session_state)
+st.write("Query params:", st.query_params)
 # 2️⃣ Get authenticated user
 user = AuthManager.current_user()
 # 3️⃣ Not authenticated → show login UI
