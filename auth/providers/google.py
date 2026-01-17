@@ -27,7 +27,8 @@ class GoogleProvider(OAuthProvider):
         uri, _ = sess.create_authorization_url(self.AUTH_URL, prompt="consent")
         return uri
 
-def handle_callback() -> Optional[CurrentUser]:   #handle_oauth_callback()
+#def handle_callback() -> Optional[CurrentUser]:   #handle_oauth_callback()
+def handle_callback(self) -> Optional[CurrentUser]:
     q = st.query_params
     if "code" not in q or "state" not in q:
         return None
