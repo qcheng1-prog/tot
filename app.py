@@ -311,27 +311,15 @@ user = AuthManager.current_user()
 
 # 3️⃣ Define callback functions
 if not user:
+if not user:
     st.title("Sign in to continue")
     
-    # Generate the URL only once
-    if "google_url" not in st.session_state:
-        st.session_state.google_url = AuthManager.PROVIDERS["google"].start_login()
-    
-    # Create a link that LOOKS like a button
-    st.markdown(
-        f"""
-        <a href="{st.session_state.google_url}" target="_self" style="
-            text-decoration: none;
-            color: white;
-            background-color: #4285F4;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: inline-block;
-            font-weight: bold;
-        ">Continue with Google</a>
-        """,
-        unsafe_allow_html=True
-    )
+    if st.button("Continue with Google"):
+        AuthManager.login("google") # Now handles the redirect instantly
+        
+    if st.button("Continue with Microsoft"):
+        AuthManager.login("microsoft")
+        
     st.stop()
     
 st.write(f"Welcome, {user.name}")
