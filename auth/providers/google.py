@@ -27,60 +27,60 @@ class GoogleProvider(OAuthProvider):
         uri, _ = sess.create_authorization_url(self.AUTH_URL, prompt="consent")
         return uri
 
-#def handle_callback() -> Optional[CurrentUser]:   #handle_oauth_callback()
-def handle_callback(self) -> Optional[CurrentUser]:
-    q = st.query_params
-    if "code" not in q or "state" not in q:
-        return None
+    #def handle_callback() -> Optional[CurrentUser]:   #handle_oauth_callback()
+    def handle_callback(self) -> Optional[CurrentUser]:
+        q = st.query_params
+        if "code" not in q or "state" not in q:
+            return None
 
-    returned_state = q.get("state")
-    code = q.get("code")
+        returned_state = q.get("state")
+        code = q.get("code")
 
-    store = _pkce_store()
+        store = _pkce_store()
 
-    # Optional: prune old entries (10 min)
-    now = time.time()
-    for s in list(store.keys()):
-        if now - store[s]["ts"] > 600:
-            store.pop(s, None)
+        # Optional: prune old entries (10 min)
+        now = time.time()
+        for s in list(store.keys()):
+            if now - store[s]["ts"] > 600:
+                store.pop(s, None)
 
-    entry = store.get(returned_state)
-    if not entry:
-        st.error("Invalid login state.")
-        return None
+        entry = store.get(returned_state)
+        if not entry:
+            st.error("Invalid login state.")
+            return None
 
-    verifier = entry["verifier"]
+        verifier = entry["verifier"]
 
-    client_id, client_secret = _get_client()
-    sess = _oauth_session(client_id)
+        client_id, client_secret = _get_client()
+        sess = _oauth_session(client_id)
 
-    token = sess.fetch_token(
-        self.TOKEN_URL,
-        code=code,
-        code_verifier=verifier,
-        client_secret=client_secret,
-    )
+        token = sess.fetch_token(
+            self.TOKEN_URL,
+            code=code,
+            code_verifier=verifier,
+            client_secret=client_secret,
+        )
 
-    idinfo = id_token.verify_oauth2_token(
-        token["id_token"],
-        google_requests.Request(),
-        client_id,
-    )   
-    user = CurrentUser(
-        email=idinfo["email"],
-        name=idinfo.get("name", idinfo["email"]),
-        picture=idinfo.get("picture"),
-        sub=idinfo.get("sub"),
-    )
+        idinfo = id_token.verify_oauth2_token(
+            token["id_token"],
+            google_requests.Request(),
+            client_id,
+        )   
+        user = CurrentUser(
+            email=idinfo["email"],
+            name=idinfo.get("name", idinfo["email"]),
+            picture=idinfo.get("picture"),
+            sub=idinfo.get("sub"),
+        )
 
-    # Persist logged-in user
-    st.session_state["current_user"] = user
+        # Persist logged-in user
+        st.session_state["current_user"] = user
 
-    # One-time use: remove verifier + clear query params
-    store.pop(returned_state, None)
-    st.query_params.clear()
+        # One-time use: remove verifier + clear query params
+        store.pop(returned_state, None)
+        st.query_params.clear()
 
-    return user
+        return user
     
     def handle_callback_old(self) -> Optional[CurrentUser]:
         # Streamlit query params
