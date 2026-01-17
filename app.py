@@ -14,18 +14,23 @@ from llm_handler import LLMHandler
 #from auth import start_google_login, handle_oauth_callback, get_current_user, logout
 from auth.manager import AuthManager
 
+# Loading JSON Schemas:
+# Scans a folder for schemaX.json.
+# Loads each schema as a dictionary keyed by page number (schemas[1], schemas[2], etc.).
+# Each schema defines form fields and types.
 SCHEMA_DIR = "./schemas"
 import sys
-print(sys.path)
-
+#print(sys.path)
 schemas = {}
-
 for fname in os.listdir(SCHEMA_DIR):
     if fname.startswith("schema") and fname.endswith(".json"):
         num = int(fname.replace("schema", "").replace(".json", ""))
         with open(os.path.join(SCHEMA_DIR, fname)) as f:
             schemas[num] = json.load(f)
 
+# Streamlit page config & env:
+#Sets title, icon, and wide layout.
+#Loads environment variables from .env.
 st.set_page_config(
     page_title="Handwritten Form Extractor",
     page_icon="📝",
@@ -86,6 +91,12 @@ load_dotenv()
 #     # Scalar
 #     return (extracted if extracted is not None else None), schema
 
+#Converts a schema into a Python object structure with default values.
+# Handles:
+# Objects → recursive dict
+# Arrays → empty list
+# Scalars → None or actual value
+# Useful for initializing review data.
 def materialize_from_schema(obj):
 
     if isinstance(obj, dict) and "value" in obj:
@@ -112,6 +123,16 @@ def materialize_from_schema(obj):
 
     return obj
 
+# Rendering forms from schema:
+# Dynamically generates Streamlit input widgets based on a JSON schema.
+# Supports:
+# Boolean → st.checkbox
+# Integer → st.number_input
+# Enum → checkboxes
+# Arrays → text areas or data editor tables
+# Objects → expanders
+# Handles nested objects and custom behavior fields (behavioral_concerns).
+# Returns a Python dict with the current user-edited values.
 def render_from_schema(schema, values, key_prefix="review"):
     out = {}
 
