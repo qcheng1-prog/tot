@@ -63,7 +63,7 @@ def start_google_login() -> str:
     store = _pkce_store()
     store[state] = {"verifier": verifier, "ts": time.time()}
 
-    ALLOWED_DOMAIN = "outlook.com" # {"charlotte.edu", "theopportunitytree.org"}
+    #ALLOWED_DOMAIN = "outlook.com" # {"charlotte.edu", "theopportunitytree.org"}
     sess = _oauth_session(client_id)
     uri, _ = sess.create_authorization_url(
         GOOGLE_AUTHORIZATION_ENDPOINT,
@@ -71,7 +71,7 @@ def start_google_login() -> str:
         code_challenge=challenge,
         code_challenge_method="S256",
         prompt="consent",
-        hd=ALLOWED_DOMAIN,  # UX hint only # QC changed
+        #hd=ALLOWED_DOMAIN,  # UX hint only # QC changed
     )
     return uri
 
@@ -116,22 +116,22 @@ def handle_oauth_callback() -> Optional[CurrentUser]:
     )
     
     # --- Domain enforcement (after token verification) --- # QC Added
-    ALLOWED_DOMAINS = {"outlook.com", "theopportunitytree.org"}
-    email = idinfo.get("email")
-    email_verified = idinfo.get("email_verified", False)
-    if not email_verified:
-        st.error("Email address is not verified.")
-        return None
+    #ALLOWED_DOMAINS = {"outlook.com", "theopportunitytree.org"}
+    #email = idinfo.get("email")
+    #email_verified = idinfo.get("email_verified", False)
+    #if not email_verified:
+        #st.error("Email address is not verified.")
+        #return None
     # Primary enforcement: email domain
-    domain = email.split("@")[-1].lower()
-    if domain not in ALLOWED_DOMAINS:
-        st.error("Unauthorized domain.")
-        return None
+    #domain = email.split("@")[-1].lower()
+    #if domain not in ALLOWED_DOMAINS:
+        #st.error("Unauthorized domain.")
+        #return None
     # Optional secondary check: hosted domain claim
-    hd_claim = idinfo.get("hd")
-    if hd_claim and hd_claim not in ALLOWED_DOMAINS:
-        st.error("Unauthorized hosted domain (" + hd_claim + ").")
-        return None
+    #hd_claim = idinfo.get("hd")
+    #if hd_claim and hd_claim not in ALLOWED_DOMAINS:
+        #st.error("Unauthorized hosted domain (" + hd_claim + ").")
+        #return None
         
     user = CurrentUser(
         email=idinfo["email"],
