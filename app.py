@@ -15,6 +15,8 @@ from llm_handler import LLMHandler
 from auth.manager import AuthManager
 
 SCHEMA_DIR = "./schemas"
+import sys
+print(sys.path)
 
 schemas = {}
 
