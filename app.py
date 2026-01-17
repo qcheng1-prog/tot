@@ -11,8 +11,8 @@ from pdf2image import convert_from_path
 
 from ocr_extractor import extract_page_json, merge_page_results
 from llm_handler import LLMHandler
-#from auth import start_google_login, handle_oauth_callback, get_current_user, logout
-from auth.manager import AuthManager
+from auth import start_google_login, handle_oauth_callback, get_current_user, logout
+#from auth.manager import AuthManager
 
 # Loading JSON Schemas:
 # Scans a folder for schemaX.json.
@@ -288,15 +288,8 @@ if "initialized" not in st.session_state:
     init_state()
     st.session_state.initialized = True
 
-#q = st.query_params  #QC removed
-#user = None
-#if "code" in q and "state" in q:
-#    user = handle_oauth_callback()
-#if not user:
-#    user = get_current_user()
-
 # ============================================================
-# Authentication (Google / Microsoft)  Q
+# Authentication (Google / Microsoft)  QC tried two authentications
 # CHandles OAuth login first.
 # Shows buttons for Google / Microsoft login if no user.
 # Stops the app until authentication completes.
@@ -304,24 +297,31 @@ if "initialized" not in st.session_state:
 # Sidebar also shows user info and a logout button.
 # ============================================================
 # 1️⃣ Handle callback first
-AuthManager.handle_callback()
-
+#AuthManager.handle_callback()
 # 2️⃣ Get user
-user = AuthManager.current_user()
-
+#user = AuthManager.current_user()
 # 3️⃣ Define callback functions
+#if not user:
+#    st.title("Sign in to continue")
+#    if st.button("Continue with Google"):
+#        AuthManager.login("google") # Now handles the redirect instantly
+#    if st.button("Continue with Microsoft"):
+#        AuthManager.login("microsoft")
+#    st.stop()
+#st.write(f"Welcome, {user.name}")
+q = st.query_params
+user = None
+if "code" in q and "state" in q:
+    user = handle_oauth_callback()
+if not user:
+    user = get_current_user()
 if not user:
     st.title("Sign in to continue")
-    
-    if st.button("Continue with Google"):
-        AuthManager.login("google") # Now handles the redirect instantly
-        
-    if st.button("Continue with Microsoft"):
-        AuthManager.login("microsoft")
-        
+    st.caption("Use your Google account.")
+    if "_auth_url" not in st.session_state:
+        st.session_state["_auth_url"] = start_google_login()
+    st.link_button("Continue with Google", st.session_state["_auth_url"], type="primary")
     st.stop()
-    
-st.write(f"Welcome, {user.name}")
 
 with st.sidebar:
     if user.picture:
