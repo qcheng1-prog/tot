@@ -283,17 +283,13 @@ user = AuthManager.current_user()
 # 3️⃣ Not authenticated → show login UI
 if not user:
     st.title("Sign in to continue")
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Continue with Google", use_container_width=True):
-            AuthManager.login("google")
-    with col2:
-        if st.button("Continue with Microsoft", use_container_width=True):
-            AuthManager.login("microsoft")
+    if st.button("Continue with Google", use_container_width=True):
+        AuthManager.login("google")
+    if st.button("Continue with Microsoft", use_container_width=True):
+        AuthManager.login("microsoft")
     st.stop()
 # 4️⃣ Authenticated app below
 st.write(f"Welcome, {user.name}")
-
 
 with st.sidebar:
     if user.picture:
