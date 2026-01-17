@@ -9,7 +9,6 @@ from typing import Optional
 
 ALLOWED_DOMAINS = {"charlotte.edu"}
 
-
 class GoogleProvider(OAuthProvider):
 
     AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -28,7 +27,61 @@ class GoogleProvider(OAuthProvider):
         uri, _ = sess.create_authorization_url(self.AUTH_URL, prompt="consent")
         return uri
 
-    def handle_callback(self) -> Optional[CurrentUser]:
+def handle_callback() -> Optional[CurrentUser]:   #handle_oauth_callback()
+    q = st.query_params
+    if "code" not in q or "state" not in q:
+        return None
+
+    returned_state = q.get("state")
+    code = q.get("code")
+
+    store = _pkce_store()
+
+    # Optional: prune old entries (10 min)
+    now = time.time()
+    for s in list(store.keys()):
+        if now - store[s]["ts"] > 600:
+            store.pop(s, None)
+
+    entry = store.get(returned_state)
+    if not entry:
+        st.error("Invalid login state.")
+        return None
+
+    verifier = entry["verifier"]
+
+    client_id, client_secret = _get_client()
+    sess = _oauth_session(client_id)
+
+    token = sess.fetch_token(
+        self.TOKEN_URL,
+        code=code,
+        code_verifier=verifier,
+        client_secret=client_secret,
+    )
+
+    idinfo = id_token.verify_oauth2_token(
+        token["id_token"],
+        google_requests.Request(),
+        client_id,
+    )   
+    user = CurrentUser(
+        email=idinfo["email"],
+        name=idinfo.get("name", idinfo["email"]),
+        picture=idinfo.get("picture"),
+        sub=idinfo.get("sub"),
+    )
+
+    # Persist logged-in user
+    st.session_state["current_user"] = user
+
+    # One-time use: remove verifier + clear query params
+    store.pop(returned_state, None)
+    st.query_params.clear()
+
+    return user
+    
+    def handle_callback_old(self) -> Optional[CurrentUser]:
         # Streamlit query params
         #q = st.experimental_get_query_params()
         q = st.query_params
@@ -49,23 +102,7 @@ class GoogleProvider(OAuthProvider):
             code=code,
             client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
         )
-    token = sess.fetch_token(
-        GOOGLE_TOKEN_ENDPOINT,
-        code=code,
-        code_verifier=verifier,
-        client_secret=client_secret,
-    )
-        try:
-            token = sess.fetch_token(
-            self.TOKEN_URL,
-            code=code,
-            code_verifier=verifier,
-            client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-        )
-        except Exception as e:
-            st.error(f"Token fetch failed: {e}")
-            return None
-            
+           
         idinfo = id_token.verify_oauth2_token(
             token["id_token"],
             requests.Request(),
