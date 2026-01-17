@@ -6,7 +6,7 @@ class AuthManager:
 
     PROVIDERS = {
         "google": GoogleProvider(),
-        "microsoft": MicrosoftProvider(),
+        #"microsoft": MicrosoftProvider(),
     }
 
     @classmethod
