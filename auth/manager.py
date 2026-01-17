@@ -16,12 +16,18 @@ class AuthManager:
 
     @classmethod
     def handle_callback(cls):
+        # ⛔ Already logged in → skip OAuth logic
+        if "current_user" in st.session_state:
+            return st.session_state["current_user"]
         for provider in cls.PROVIDERS.values():
             user = provider.handle_callback()
             if user:
+                # 1️⃣ Persist authenticated user
                 st.session_state["current_user"] = user
+                # 2️⃣ Remove OAuth params to prevent loops
                 st.query_params.clear()
-                return user
+                # 3️⃣ Force Streamlit to continue to app
+                st.rerun()
         return None
 
     @staticmethod
