@@ -115,8 +115,8 @@ def handle_oauth_callback() -> Optional[CurrentUser]:
         client_id,
     )
     
-    # --- Domain enforcement (after token verification) ---
-    ALLOWED_DOMAIN = {"charlotte.edu", "theopportunitytree.org"}
+    # --- Domain enforcement (after token verification) --- # QC Added
+    ALLOWED_DOMAINS = {"charlotte.edu", "theopportunitytree.org"}
     email = idinfo.get("email")
     email_verified = idinfo.get("email_verified", False)
     if not email_verified:
