@@ -11,11 +11,13 @@ class AuthManager:
 
     @classmethod
     def login(cls, provider_name: str):
+        st.write("auth manager login()")
         url = cls.PROVIDERS[provider_name].start_login()
         st.markdown(f"[Continue with {provider_name.title()}]({url})")
 
     @classmethod
     def handle_callback(cls):
+        st.write("auth manager handle_callback()")
         # ⛔ Already logged in → skip OAuth logic
         #st.write("handle_callback()\n")
         #st.write(st.session_state)
