@@ -11,11 +11,21 @@ class AuthManager:
 
     @classmethod
     def login(cls, provider_name: str):
-        st.write("auth manager login()")
+        # 1. Get the URL from the provider
         url = cls.PROVIDERS[provider_name].start_login()
-        st.write(url)
-        st.markdown(f"[Continue with {provider_name.title()}]({url})")
-
+    
+        # 2. Use a JavaScript redirect to force the browser to leave IMMEDIATELY
+        # This prevents the user from seeing a second "Continue" link
+        js = f"""
+        <script>
+            window.location.href = "{url}";
+        </script>
+        """
+        st.components.v1.html(js, height=0)
+    
+        # 3. Fallback for browsers with JS blocked
+        st.markdown(f"Redirecting to {provider_name.title()}... [Click here if not redirected]({url})")
+        
     @classmethod
     def handle_callback(cls):
         st.write("auth manager handle_callback()")
