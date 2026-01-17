@@ -273,41 +273,28 @@ if "initialized" not in st.session_state:
 #if not user:
 #    user = get_current_user()
 
-#user = AuthManager.current_user()  #QC added => #QC removed
-#if not user:
-#    AuthManager.handle_callback()
- #   user = AuthManager.current_user()
-#if not user:  #QC added
- #   st.title("Sign in to continue")
-  #  AuthManager.login("google")
-   # AuthManager.login("microsoft")
-    #st.stop()
-# 1️⃣ Always handle OAuth callback first #QC added
+# ============================================================
+# Authentication (Google / Microsoft)  QC
+# ============================================================
+# 1️⃣ Always handle OAuth callback FIRST
 AuthManager.handle_callback()
-# 🔍 DEBUG (temporary)
-st.write("Session:", st.session_state)
-st.write("Query params:", st.query_params)
-# 2️⃣ Get authenticated user
+# 2️⃣ Get current user (if authenticated)
 user = AuthManager.current_user()
 # 3️⃣ Not authenticated → show login UI
 if not user:
     st.title("Sign in to continue")
-    if st.button("Continue with Google"):
-        AuthManager.login("google")
-    if st.button("Continue with Microsoft"):
-        AuthManager.login("microsoft")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Continue with Google", use_container_width=True):
+            AuthManager.login("google")
+    with col2:
+        if st.button("Continue with Microsoft", use_container_width=True):
+            AuthManager.login("microsoft")
     st.stop()
 # 4️⃣ Authenticated app below
-st.write("Welcome", user.name)
+st.write(f"Welcome, {user.name}")
 
-#if not user: #QC removed
-#    st.title("Sign in to continue")
-#    st.caption("Use your Google account.")
-#    if "_auth_url" not in st.session_state:
-#        st.session_state["_auth_url"] = start_google_login()
-#    st.link_button("Continue with Google", st.session_state["_auth_url"], type="primary")
-#    st.stop()
-    
+
 with st.sidebar:
     if user.picture:
         st.image(user.picture, width=64)
