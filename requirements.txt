@@ -10,3 +10,4 @@ argparse
 openpyxl
 authlib>=1.3
 google-auth
+python-jose[cryptography]
