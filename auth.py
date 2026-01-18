@@ -147,9 +147,6 @@ def handle_oauth_callback_gen() -> Optional[CurrentUser]:
         # (Note: In production, you should verify the signature)
         idinfo = jwt.get_unverified_claims(id_token)
 
-user = CurrentUser(
-    email=idinfo.get("email") or idinfo.get("preferred_username"),
-
     user = CurrentUser(
         email=idinfo.get("email") or idinfo.get("preferred_username"),
         name=idinfo.get("name"),
