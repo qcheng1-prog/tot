@@ -317,7 +317,7 @@ if not user:
 
     # Create 3 columns: side (25%), middle (50%), side (25%)
     # This effectively makes your buttons 50% of the page width
-    left_spacer, middle_column, right_spacer = st.columns([1, 2, 1])
+    left_spacer, middle_column, right_spacer = st.columns([2, 1, 1])
 
     with left_spacer:
         # --- ROW 1: Google ---
