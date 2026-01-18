@@ -315,33 +315,28 @@ if not user:
 if not user:
     st.title("Sign in to continue")
 
-    # Create 3 columns: side (25%), middle (50%), side (25%)
-    # This effectively makes your buttons 50% of the page width
-    left_spacer, middle_column, right_spacer = st.columns([1, 2, 1])
+    # --- ROW 1: Google ---
+    if "_google_auth" not in st.session_state:
+        st.session_state["_google_auth"] = start_login("google")
+    
+    st.link_button(
+        "Continue with Google",
+        st.session_state["_google_auth"],
+        type="primary",
+        use_container_width=True  # Makes it a full-width row
+    )
 
-    with left_spacer:
-        # --- ROW 1: Google ---
-        if "_google_auth" not in st.session_state:
-            st.session_state["_google_auth"] = start_login("google")
-        
-        st.link_button(
-            "Continue with Google",
-            st.session_state["_google_auth"],
-            type="primary",
-            use_container_width=True  # Fills the 50% middle column
-        )
-
-        # --- ROW 2: Microsoft ---
-        if "_ms_auth" not in st.session_state:
-            st.session_state["_ms_auth"] = start_login("microsoft")
-        
-        st.link_button(
-            "Continue with Microsoft",
-            st.session_state["_ms_auth"],
-            use_container_width=True  # Fills the 50% middle column
-        )
-
+    # --- ROW 2: Microsoft ---
+    if "_ms_auth" not in st.session_state:
+        st.session_state["_ms_auth"] = start_login("microsoft")
+    
+    st.link_button(
+        "Continue with Microsoft",
+        st.session_state["_ms_auth"],
+        use_container_width=True  # Makes it a full-width row
+    )
     st.stop()
+
 with st.sidebar:
     if user.picture:
         st.image(user.picture, width=64)
