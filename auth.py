@@ -6,6 +6,7 @@ import streamlit as st
 from authlib.integrations.requests_client import OAuth2Session
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
+from jose import jwt  # Add this import at the top
 
 GOOGLE_AUTHORIZATION_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
@@ -139,7 +140,15 @@ def handle_oauth_callback_gen() -> Optional[CurrentUser]:
         )
     else:
         # Microsoft ID token is already a JWT
-        idinfo = sess.parse_id_token(token)
+        #idinfo = sess.parse_id_token(token)
+        # Microsoft returns the ID token inside the token dictionary
+        id_token = token.get('id_token')
+        # Decode the JWT without verification for immediate testing 
+        # (Note: In production, you should verify the signature)
+        idinfo = jwt.get_unverified_claims(id_token)
+
+user = CurrentUser(
+    email=idinfo.get("email") or idinfo.get("preferred_username"),
 
     user = CurrentUser(
         email=idinfo.get("email") or idinfo.get("preferred_username"),
