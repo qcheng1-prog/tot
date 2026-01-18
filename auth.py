@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 import streamlit as st
 from authlib.integrations.requests_client import OAuth2Session
-from google.oauth2 import id_token
+#from google.oauth2 import id_token
+from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
 from jose import jwt  # Add this import at the top
 
@@ -133,7 +134,8 @@ def handle_oauth_callback_gen() -> Optional[CurrentUser]:
     )
 
     if provider == "google":
-        idinfo = id_token.verify_oauth2_token(
+        # Use 'google_id_token' (the library) to verify 'token["id_token"]' (the string)
+        idinfo = google_id_token.verify_oauth2_token(
             token["id_token"],
             google_requests.Request(),
             client_id,
